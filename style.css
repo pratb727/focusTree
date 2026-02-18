@@ -1,0 +1,251 @@
+:root {
+    --font: 'Poppins', sans-serif;
+    --glass: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --text: #2d3436;
+    --accent: #43a047;
+    --danger: #e53935;
+    --pause: #fbc02d; 
+    
+    /* Day: Green Bottom -> Blue Top Fade */
+    --bg-day: linear-gradient(to top, #76b852 0%, #8DC26F 25%, #7fabd8 60%, #89f7fe 100%);
+    
+    /* Night: Deep Sky */
+    --bg-night: linear-gradient(to top, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+
+* { box-sizing: border-box; transition: color 0.3s; }
+
+body {
+    margin: 0;
+    font-family: var(--font);
+    height: 100vh;
+    overflow: hidden;
+    color: var(--text);
+}
+
+/* --- Backgrounds --- */
+.background-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-day);
+    z-index: -1;
+    transition: background 1.5s ease;
+}
+
+body.night-mode .background-layer {
+    background: var(--bg-night);
+}
+
+body.night-mode {
+    --text: #eceff1;
+    --glass: rgba(0, 0, 0, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Particles --- */
+.particle-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+/* Day Leaves */
+.leaf {
+    position: absolute;
+    width: 20px; height: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px 20px;
+    animation: fall linear forwards;
+}
+
+/* Pink Petals (Confetti) */
+.petal {
+    position: absolute;
+    width: 15px; height: 15px;
+    background: #ffcdd2; /* Pink */
+    border-radius: 100% 0 100% 0;
+    animation: petalDrop 4s linear forwards;
+    z-index: 20;
+}
+
+/* Fireflies */
+.firefly {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: #ffeaa7;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fdcb6e, 0 0 20px #ffeaa7;
+    animation: fly ease-in-out infinite alternate;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite;
+}
+
+/* --- Animations --- */
+@keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+@keyframes petalDrop {
+    0% { transform: translateY(-10vh) rotate(0deg) scale(0.5); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) scale(1); opacity: 0; }
+}
+
+@keyframes fly {
+    0% { transform: translate(0, 0); opacity: 0.5; }
+    100% { transform: translate(30px, -50px); opacity: 1; }
+}
+
+@keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- Layout --- */
+.app-layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+/* Left Scene */
+.scene-area {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align tree to bottom */
+    align-items: center;
+    padding-bottom: 50px;
+    position: relative;
+    z-index: 1;
+}
+
+.tree-display {
+    position: relative;
+    width: 100%;
+    height: 80%; /* Takes up most of the vertical space */
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Plant tree on ground */
+    margin-bottom: 20px;
+}
+
+.tree-visual {
+    object-fit: contain;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 15px 15px rgba(0,0,0,0.15));
+    transform-origin: bottom center;
+}
+
+/* --- DYNAMIC TREE SIZES --- */
+.stage-0 { height: 80px; }  /* Seed: Small but visible */
+.stage-1 { height: 160px; } /* Sapling */
+.stage-2 { height: 260px; } /* Small Plant */
+.stage-3 { height: 380px; } /* Bigger Plant */
+.stage-4 { height: 650px; } /* Full Tree: MASSIVE */
+.stage-wilted { height: 350px; filter: grayscale(100%) sepia(20%); }
+
+body.night-mode .tree-visual {
+    filter: drop-shadow(0 0 25px rgba(100, 255, 218, 0.3)); 
+}
+
+.shadow-oval {
+    position: absolute;
+    bottom: -10px;
+    width: 180px;
+    height: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 50%;
+    filter: blur(8px);
+    z-index: -1;
+}
+
+.quote-pill {
+    background: var(--glass);
+    padding: 10px 25px;
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    margin-top: auto; /* Push to bottom if tree is small */
+}
+
+/* Right Control Panel */
+.control-panel {
+    flex: 1;
+    max-width: 420px;
+    background: var(--glass);
+    backdrop-filter: blur(25px);
+    border-left: 1px solid var(--glass-border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+}
+
+.header { display: flex; justify-content: space-between; align-items: center; }
+.logo-text { margin: 0; font-weight: 600; letter-spacing: -0.5px; }
+
+.theme-btn {
+    background: rgba(255,255,255,0.2);
+    border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem;
+}
+
+.stats-grid { display: flex; gap: 10px; }
+.stat-box {
+    flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px; text-align: center;
+}
+.stat-box .label { display: block; font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; }
+.stat-box .value { font-size: 1.4rem; font-weight: 700; }
+
+.timer-wrapper { text-align: center; margin: 10px 0; }
+.time-big { font-size: 4.5rem; font-weight: 300; letter-spacing: -2px; }
+
+/* Custom Slider */
+input[type=range] { width: 100%; -webkit-appearance: none; background: transparent; }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
+body.night-mode input[type=range]::-webkit-slider-runnable-track { background: rgba(255,255,255,0.2); }
+input[type=range]::-webkit-slider-thumb { height: 20px; width: 20px; border-radius: 50%; background: var(--accent); -webkit-appearance: none; margin-top: -7px; cursor: pointer; }
+.slider-labels { display: flex; justify-content: space-between; font-size: 0.8rem; opacity: 0.6; margin-top: 5px; }
+
+/* Buttons */
+.btn-main, .btn-danger, .btn-pause {
+    padding: 16px; border: none; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-main { width: 100%; background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(67, 160, 71, 0.3); }
+.btn-main:hover { transform: translateY(-2px); }
+
+.active-controls { display: flex; gap: 10px; }
+.btn-pause { flex: 1; background: var(--pause); color: white; font-size: 1.5rem; padding: 10px; display: flex; align-items: center; justify-content: center; }
+.btn-danger { flex: 2; background: var(--danger); color: white; }
+
+.hidden { display: none !important; }
+
+/* Tasks */
+.divider { height: 1px; background: var(--glass-border); margin: 1rem 0; }
+.input-row { display: flex; gap: 8px; margin-bottom: 15px; }
+#taskInput { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.1); color: inherit; outline: none; }
+.btn-add { width: 45px; border-radius: 8px; border: none; background: var(--text); color: white; font-size: 1.5rem; cursor: pointer; }
+.task-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; }
+.task-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 8px; animation: popIn 0.3s ease; }
+.task-item.done span { text-decoration: line-through; opacity: 0.5; }
